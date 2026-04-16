@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYNTHESIS AI — Vídeos Cinematográficos com Inteligência Artificial</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #E8C97A;
+      --purple: #7B2FBE;
+      --purple-light: #A855F7;
+      --neon-blue: #00D4FF;
+      --neon-blue-dim: #0099BB;
+      --bg-dark: #080808;
+      --bg-card: #111111;
+      --bg-card2: #161616;
+      --text-muted: #888;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: var(--bg-dark);
+      color: #E8E8E8;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.04em; }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .text-gold-gradient {
+      background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, #A07830 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .text-blue-gradient {
+      background: linear-gradient(135deg, var(--neon-blue) 0%, var(--purple-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .glow-gold { box-shadow: 0 0 30px rgba(201,168,76,0.25), 0 0 80px rgba(201,168,76,0.08); }
+    .glow-blue { box-shadow: 0 0 30px rgba(0,212,255,0.2), 0 0 80px rgba(0,212,255,0.06); }
+    .glow-purple { box-shadow: 0 0 40px rgba(123,47,190,0.3), 0 0 100px rgba(123,47,190,0.1); }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+      background-size: 200% 200%;
+      color: #000;
+      font-family: 'Bebas Neue', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 16px 36px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .btn-primary:hover { background-position: right center; box-shadow: 0 0 40px rgba(201,168,76,0.5); transform: translateY(-2px); }
+    .btn-primary:hover::after { opacity: 1; }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 10px 24px;
+      border-radius: 4px;
+      border: 1px solid rgba(201,168,76,0.4);
+      color: var(--gold-light);
+      background: rgba(201,168,76,0.05);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+    .btn-outline:hover { border-color: var(--gold); background: rgba(201,168,76,0.1); box-shadow: 0 0 20px rgba(201,168,76,0.2); }
+
+    .animated-border { position: relative; }
+    .animated-border::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      background: linear-gradient(90deg, var(--gold), var(--purple-light), var(--neon-blue), var(--gold));
+      background-size: 300% 100%;
+      border-radius: inherit;
+      animation: borderMove 4s linear infinite;
+      z-index: -1;
+    }
+    @keyframes borderMove {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
+    }
+
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(8,8,8,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 0 24px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-weight: 800;
+      font-size: 1.5rem;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+    }
+    .logo span:first-child { color: #fff; }
+    .logo .logo-ai { color: var(--gold); }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+    }
+    .orb-1 { width: 500px; height: 500px; background: rgba(123,47,190,0.15); top: -100px; left: -100px; }
+    .orb-2 { width: 400px; height: 400px; background: rgba(0,212,255,0.08); bottom: 0; right: -80px; }
+    .orb-3 { width: 300px; height: 300px; background: rgba(201,168,76,0.06); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(201,168,76,0.08);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 100px;
+      padding: 6px 18px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 32px;
+      animation: fadeInDown 0.8s ease both;
+    }
+    .badge-dot {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(1.3); } }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+      animation: fadeInUp 0.9s ease 0.2s both;
+      max-width: 820px;
+    }
+    .hero p {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 40px;
+      animation: fadeInUp 0.9s ease 0.4s both;
+    }
+    .hero .cta-group { animation: fadeInUp 0.9s ease 0.6s both; }
+
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      margin-top: 64px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeInUp 0.9s ease 0.8s both;
+    }
+    .stat { text-align: center; }
+    .stat-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--gold-light);
+    }
+    .stat-label { font-size: 0.78rem; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+
+    section { padding: 100px 24px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-tag {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-tag::before { content: ''; display: block; width: 30px; height: 1px; background: var(--gold); }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: 0.06em;
+      margin-bottom: 20px;
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .video-container::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, rgba(201,168,76,0.3), rgba(123,47,190,0.2), rgba(0,212,255,0.15));
+      border-radius: 14px;
+      z-index: -1;
+    }
+    .video-ratio { position: relative; padding-bottom: 56.25%; height: 0; }
+    .video-ratio iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+    .video-label {
+      position: absolute;
+      top: 16px; left: 16px;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 4px;
+      padding: 4px 12px;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-top: 56px;
+    }
+    .price-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 36px 32px;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
+    }
+    .price-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .price-card:hover { transform: translateY(-6px); }
+    .price-card:hover::before { opacity: 1; }
+    .price-card:hover { box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(201,168,76,0.08); }
+    .price-card.featured {
+      border-color: rgba(201,168,76,0.3);
+      background: linear-gradient(145deg, #161616, #121212);
+    }
+    .price-card.featured::before { opacity: 1; background: linear-gradient(90deg, transparent, var(--gold-light), transparent); }
+
+    .card-badge {
+      display: inline-block;
+      background: var(--gold);
+      color: #000;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 3px;
+      margin-bottom: 20px;
+    }
+    .card-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; color: #fff; }
+    .card-duration {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card-duration::before { content: '⏱'; font-size: 0.75rem; }
+    .card-price-main {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: var(--gold-light);
+      line-height: 1;
+    }
+    .card-price-main sup { font-size: 1.1rem; vertical-align: super; margin-right: 3px; color: var(--gold); -webkit-text-fill-color: var(--gold); }
+    .card-price-alt { font-size: 0.82rem; color: var(--text-muted); margin-top: 6px; margin-bottom: 28px; }
+    .card-price-alt strong { color: #C0C0C0; }
+
+    .card-features { list-style: none; margin-bottom: 32px; }
+    .card-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 1rem;
+      color: #bbb;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .card-features li:last-child { border-bottom: none; }
+    .check {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: rgba(201,168,76,0.1);
+      border: 1px solid rgba(201,168,76,0.3);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+      font-size: 0.65rem;
+      color: var(--gold);
+    }
+
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2px;
+      margin-top: 56px;
+      position: relative;
+    }
+    .process-step {
+      background: var(--bg-card);
+      padding: 36px 28px;
+      position: relative;
+      transition: background 0.3s;
+    }
+    .process-step:first-child { border-radius: 12px 0 0 12px; }
+    .process-step:last-child { border-radius: 0 12px 12px 0; }
+    .process-step:hover { background: var(--bg-card2); }
+    .step-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+    .step-title { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
+    .step-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+    .step-connector {
+      position: absolute;
+      top: 50%; right: -16px;
+      transform: translateY(-50%);
+      width: 32px; height: 32px;
+      background: var(--bg-dark);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold);
+      font-size: 0.7rem;
+      z-index: 2;
+    }
+
+    .faq-list { margin-top: 48px; }
+    .faq-item {
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .faq-item.open { border-color: rgba(201,168,76,0.25); }
+    .faq-question {
+      width: 100%;
+      background: var(--bg-card);
+      border: none;
+      padding: 22px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      text-align: left;
+      gap: 16px;
+      transition: background 0.2s;
+    }
+    .faq-question:hover { background: var(--bg-card2); }
+    .faq-q-text { font-family: 'Bebas Neue', sans-serif; font-size: 0.95rem; font-weight: 600; color: #ddd; }
+    .faq-icon {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.3);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      color: var(--gold);
+      font-size: 1rem;
+      transition: transform 0.3s, background 0.3s;
+    }
+    .faq-item.open .faq-icon { transform: rotate(45deg); background: rgba(201,168,76,0.1); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s; background: var(--bg-card); }
+    .faq-answer-inner { padding: 0 24px 22px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.75; }
+    .faq-item.open .faq-answer { max-height: 300px; }
+
+    .urgency-banner {
+      background: linear-gradient(135deg, rgba(123,47,190,0.15), rgba(0,212,255,0.08));
+      border: 1px solid rgba(123,47,190,0.25);
+      border-radius: 12px;
+      padding: 40px 36px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .urgency-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(123,47,190,0.1) 0%, transparent 70%);
+    }
+
+    footer { border-top: 1px solid rgba(255,255,255,0.05); padding: 48px 24px 32px; }
+    .social-link {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+    .social-link:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.05); }
+
+    @keyframes fadeInDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    @media (max-width: 768px) {
+      .process-grid { grid-template-columns: 1fr; gap: 2px; }
+      .process-step:first-child { border-radius: 12px 12px 0 0; }
+      .process-step:last-child { border-radius: 0 0 12px 12px; }
+      .step-connector { display: none; }
+      .hero-stats { gap: 28px; }
+      section { padding: 72px 20px; }
+      .pricing-grid { grid-template-columns: 1fr; }
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+      margin: 0 auto;
+      max-width: 1100px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="#" class="logo">
+    <span>SYNTHESIS </span><span class="logo-ai">AI</span>
+  </a>
+  <a href="#" data-link="areaCliente" class="btn-outline">Área do Cliente</a>
+</header>
+
+<section class="hero">
+  <div class="hero-bg-orb orb-1"></div>
+  <div class="hero-bg-orb orb-2"></div>
+  <div class="hero-bg-orb orb-3"></div>
+
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    Tecnologia de Ponta em IA Generativa
+  </div>
+
+  <h1>
+    Transforme Ideias em<br />
+    <span class="text-gold-gradient">Vídeos Cinematográficos</span><br />
+    com Inteligência Artificial
+  </h1>
+
+  <p>
+    Criativos de alta retenção para <strong style="color:#ddd;">Reels, Stories e VSLs</strong> que vendem por você — enquanto você foca no que importa.
+  </p>
+
+  <div class="cta-group">
+    <a href="#precos" class="btn-primary" style="font-size:1rem; padding:18px 44px;">
+      ✦ Quero entrar na fila de espera
+    </a>
+    <p style="margin-top:14px; font-size:0.78rem; color:var(--text-muted); letter-spacing:0.04em;">
+      🔒 Vagas limitadas · Entrega em até 48h
+    </p>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-number">48h</div>
+      <div class="stat-label">Prazo de Entrega</div>
+    </div>
+    <div class="stat" style="border-left:1px solid rgba(255,255,255,0.06); border-right:1px solid rgba(255,255,255,0.06); padding:0 40px;">
+      <div class="stat-number">3x</div>
+      <div class="stat-label">Mais Retenção</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">100%</div>
+      <div class="stat-label">Direitos de Uso</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section style="padding:80px 24px;">
+  <div class="container">
+    <div style="text-align:center; margin-bottom:40px;" class="reveal">
+      <div class="section-tag" style="justify-content:center; gap:12px;">
+        <span style="display:block;width:30px;height:1px;background:var(--gold);"></span>
+        Assista antes de decidir
+        <span style="display:block;width:30px;height:1px;background:var(--gold);"></span>
+      </div>
+      <h2 class="section-title">Veja o poder da <span class="text-blue-gradient">IA em ação</span></h2>
+      <p style="color:var(--text-muted); max-width:500px; margin:0 auto; font-size:0.95rem;">Em menos de 3 minutos, entenda por que marcas de alta performance já migraram para vídeos com IA.</p>
+    </div>
+
+    <div class="video-container animated-border reveal reveal-delay-1" style="border-radius:12px; position:relative;">
+      <div class="video-label">VSL Explicativo</div>
+      <div class="video-ratio">
+        <iframe
+          src="https://www.youtube.com/embed/dQw4w9WgXcQ?controls=1&rel=0&modestbranding=1"
+          title="SYNTHESIS AI — VSL"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="precos">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-tag">Investimento</div>
+      <h2 class="section-title">Escolha o <span class="text-gold-gradient">Pack Ideal</span><br />para o seu negócio</h2>
+      <p style="color:var(--text-muted); max-width:520px; font-size:0.95rem; line-height:1.7;">Cada entrega é produzida com Exclusividade total. Vagas abertas apenas para novos clientes <strong style="color:#bbb;">uma vez por mês</strong>.</p>
+    </div>
+
+    <div class="pricing-grid">
+      <div class="price-card reveal reveal-delay-1">
+        <div class="card-title">Pack Stories</div>
+        <div class="card-duration">15 a 20 segundos · Formato Vertical</div>
+        <div style="margin-bottom:8px;">
+          <span class="card-price-main"><sup>R$</sup>500</span>
+        </div>
+        <div class="card-price-alt">ou <strong>2 vídeos por R$ 900</strong> — economia de R$ 100</div>
+        <ul class="card-features">
+          <li><span class="check">✓</span> Roteiro persuasivo otimizado para Stories</li>
+          <li><span class="check">✓</span> Edição com cortes de alta retenção</li>
+          <li><span class="check">✓</span> Legenda animada estilo viral</li>
+          <li><span class="check">✓</span> Entrega em até 48h úteis</li>
+          <li><span class="check">✓</span> 1 revisão incluída</li>
+        </ul>
+        <a href="#" data-link="packStories" class="btn-outline" style="width:100%; justify-content:center;">Quero este pack</a>
+      </div>
+
+      <div class="price-card featured reveal reveal-delay-2" style="transform:scale(1.03);">
+        <div class="card-badge">⚡ O Mais Pedido</div>
+        <div class="card-title">Pack Reels</div>
+        <div class="card-duration">30s a 1 minuto · Alta Retenção Absurda</div>
+        <div style="margin-bottom:8px;">
+          <span class="card-price-main"><sup>R$</sup>1.000</span>
+        </div>
+        <div class="card-price-alt">ou <strong>2 vídeos por R$ 1.500</strong> — economia de R$ 500</div>
+        <ul class="card-features">
+          <li><span class="check">✓</span> Roteiro com gancho de 3 segundos</li>
+          <li><span class="check">✓</span> Edição cinematográfica com IA generativa</li>
+          <li><span class="check">✓</span> Música licenciada + efeitos sonoros</li>
+          <li><span class="check">✓</span> Legendas e chamada para ação visual</li>
+          <li><span class="check">✓</span> Entrega em até 48h úteis</li>
+          <li><span class="check">✓</span> 2 revisões incluídas</li>
+        </ul>
+        <a href="#" data-link="packReels" class="btn-primary" style="width:100%; justify-content:center;">Garantir minha vaga</a>
+      </div>
+
+      <div class="price-card reveal reveal-delay-3">
+        <div class="card-title">VSL Premium</div>
+        <div class="card-duration">3 a 10 minutos · Conversão Máxima</div>
+        <div style="margin-bottom:8px;">
+          <span class="card-price-main"><sup>R$</sup>2.000</span>
+        </div>
+        <div class="card-price-alt">Roteiro + Edição Completa incluídos</div>
+        <ul class="card-features">
+          <li><span class="check">✓</span> Roteiro de Resposta Direta completo</li>
+          <li><span class="check">✓</span> Produção cinematográfica com IA</li>
+          <li><span class="check">✓</span> Voz em off profissional (IA vocal)</li>
+          <li><span class="check">✓</span> Trilha emocional e sound design</li>
+          <li><span class="check">✓</span> Entrega em até 5 dias úteis</li>
+          <li><span class="check">✓</span> 3 revisões incluídas</li>
+        </ul>
+        <a href="#" data-link="vslPremium" class="btn-outline" style="width:100%; justify-content:center;">Falar com especialista</a>
+      </div>
+    </div>
+
+    <div class="urgency-banner reveal" style="margin-top:48px;">
+      <p style="font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--purple-light); margin-bottom:10px;">⚠ Atenção — Vagas Limitadas</p>
+      <h3 style="font-size:1.4rem; font-weight:700; color:#fff; margin-bottom:8px;">Apenas <span style="color:var(--gold);">3 vagas disponíveis</span> este mês</h3>
+      <p style="color:var(--text-muted); font-size:0.88rem;">A agenda é fechada propositalmente para garantir Exclusividade e qualidade absoluta em cada entrega.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section>
+  <div class="container">
+    <div class="reveal" style="text-align:center; margin-bottom:0;">
+      <div class="section-tag" style="justify-content:center;">
+        <span style="display:block;width:30px;height:1px;background:var(--gold);"></span>
+        Como funciona
+        <span style="display:block;width:30px;height:1px;background:var(--gold);"></span>
+      </div>
+      <h2 class="section-title">Do <span class="text-gold-gradient">Briefing</span> à<br />Entrega em 4 Passos</h2>
+    </div>
+
+    <div class="process-grid">
+      <div class="process-step reveal reveal-delay-1">
+        <div class="step-number">01</div>
+        <div class="step-title">Escolha o Pack</div>
+        <div class="step-desc">Selecione o formato ideal para o seu objetivo — Stories, Reels ou VSL completa para vender no automático.</div>
+        <div class="step-connector">→</div>
+      </div>
+      <div class="process-step reveal reveal-delay-2">
+        <div class="step-number">02</div>
+        <div class="step-title">Entre na Fila de Espera</div>
+        <div class="step-desc">Garanta sua vaga antes que feche. As vagas são <strong style="color:#bbb;">alocadas imediatamente</strong> após o pagamento.</div>
+        <div class="step-connector">→</div>
+      </div>
+      <div class="process-step reveal reveal-delay-3">
+        <div class="step-number">03</div>
+        <div class="step-title">Call de Alinhamento</div>
+        <div class="step-desc">Uma conversa rápida de 20 minutos para capturar a essência da sua marca e definir o roteiro estratégico.</div>
+        <div class="step-connector">→</div>
+      </div>
+      <div class="process-step reveal" style="transition-delay:0.4s;">
+        <div class="step-number">04</div>
+        <div class="step-title">Entrega em 48h</div>
+        <div class="step-desc">Receba seu vídeo pronto para publicar — com retenção absurda e aprovado para uso comercial imediato.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section>
+  <div class="container" style="max-width:720px;">
+    <div class="reveal">
+      <div class="section-tag">Dúvidas Frequentes</div>
+      <h2 class="section-title">Tudo que você precisa <span class="text-gold-gradient">saber</span></h2>
+    </div>
+
+    <div class="faq-list reveal reveal-delay-1">
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span class="faq-q-text">Qual é o prazo real de entrega?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Stories e Reels são entregues em até <strong>48 horas úteis</strong> após a call de alinhamento e aprovação do roteiro. VSLs Premium têm prazo de até 5 dias úteis. Trabalhamos com prazos <em>reais</em> — sem surpresas.
+          </div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span class="faq-q-text">Como devo enviar o material da minha marca?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Após o pagamento, você receberá um formulário de briefing e um link para upload de arquivos. Pode enviar fotos, vídeos de referência, logo, paleta de cores e qualquer material que represente sua marca. Aceito Google Drive, Dropbox e WeTransfer.
+          </div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span class="faq-q-text">Tenho os direitos autorais sobre o vídeo entregue?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Sim, 100%. Após a entrega final e a quitação do serviço, todos os direitos de uso comercial são transferidos integralmente para você. Pode publicar em qualquer plataforma, quantas vezes quiser, sem restrições.
+          </div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span class="faq-q-text">Funciona para qualquer nicho de mercado?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Sim. Já produzimos vídeos para infoprodutores, e-commerce, clínicas, imóveis, agências e marcas físicas. A IA se adapta ao tom, linguagem e estética do seu nicho. Na call de alinhamento, mapeamos exatamente o que converte no seu mercado.
+          </div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span class="faq-q-text">E se eu não gostar do resultado?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Cada pack inclui rodadas de revisão (1 a 3, dependendo do plano). O objetivo é que você fique 100% satisfeito antes de fechar o projeto. Nos preocupamos profundamente com a qualidade de cada entrega — não é apenas um serviço, é a nossa reputação em jogo.
+          </div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span class="faq-q-text">Por que as vagas são tão limitadas?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Limitamos propositalmente para garantir atenção exclusiva a cada cliente. Qualidade cinematográfica exige foco. Ao aceitar mais projetos do que conseguimos entregar com excelência, estaríamos comprometendo o resultado — e isso nunca acontecerá aqui.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section style="padding:100px 24px; text-align:center;">
+  <div class="container" style="max-width:700px;">
+    <div class="reveal">
+      <p style="font-size:0.75rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:20px;">Última chamada</p>
+      <h2 class="section-title" style="font-size:clamp(2rem,5vw,3.2rem);">
+        Seus concorrentes já estão<br />
+        usando <span class="text-gold-gradient">IA para vender.</span>
+      </h2>
+      <p style="color:var(--text-muted); font-size:1rem; line-height:1.7; margin:24px 0 40px;">
+        Enquanto você lê isso, alguém no seu nicho está publicando um Reel produzido com Tecnologia de Ponta que vai aparecer para o seu cliente antes de você aparecer.
+      </p>
+      <a href="#" data-link="ctaFinal" class="btn-primary" style="font-size:1.05rem; padding:20px 52px;">
+        ✦ Garantir minha vaga agora
+      </a>
+      <p style="margin-top:16px; font-size:0.8rem; color:var(--text-muted);">
+        🔒 Pagamento seguro · Sem fidelidade · Cancele quando quiser
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:24px; margin-bottom:32px;">
+      <a href="#" class="logo">
+        <span>SYNTHESIS </span><span class="logo-ai">AI</span>
+      </a>
+      <div style="display:flex; gap:12px;">
+        <a href="#" data-link="instagram" class="social-link" title="Instagram" aria-label="Instagram">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="#" data-link="youtube" class="social-link" title="YouTube" aria-label="YouTube">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-1.96C18.88 4 12 4 12 4s-6.88 0-8.6.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.94 1.96C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+        </a>
+        <a href="#" data-link="whatsapp" class="social-link" title="WhatsApp" aria-label="WhatsApp">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div style="height:1px; background:rgba(255,255,255,0.04); margin-bottom:24px;"></div>
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px;">
+      <p style="font-size:0.78rem; color:var(--text-muted);">
+        © 2025 SYNTHESIS AI · Todos os direitos reservados
+      </p>
+      <div style="display:flex; gap:24px;">
+        <a href="#" data-link="politica" style="font-size:0.78rem; color:var(--text-muted); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">Política de Privacidade</a>
+        <a href="#" data-link="termos" style="font-size:0.78rem; color:var(--text-muted); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">Termos de Uso</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const LINKS = {
+    areaCliente:    'https://SEU-LINK-AREA-DO-CLIENTE.com',
+    packStories:    'https://pay.kiwify.com.br/SEU-LINK-STORIES',
+    packReels:      'https://pay.kiwify.com.br/SEU-LINK-REELS',
+    vslPremium:     'https://pay.kiwify.com.br/SEU-LINK-VSL',
+    ctaFinal:       'https://pay.kiwify.com.br/SEU-LINK-REELS',
+    instagram:      'https://instagram.com/SEU-@',
+    youtube:        'https://youtube.com/@SEU-CANAL',
+    whatsapp:       'https://wa.me/55SEUNUMERO',
+    politica:       '#',
+    termos:         '#',
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('[data-link="areaCliente"]').href  = LINKS.areaCliente;
+    document.querySelector('[data-link="packStories"]').href  = LINKS.packStories;
+    document.querySelector('[data-link="packReels"]').href    = LINKS.packReels;
+    document.querySelector('[data-link="vslPremium"]').href   = LINKS.vslPremium;
+    document.querySelector('[data-link="ctaFinal"]').href     = LINKS.ctaFinal;
+    document.querySelector('[data-link="instagram"]').href    = LINKS.instagram;
+    document.querySelector('[data-link="youtube"]').href      = LINKS.youtube;
+    document.querySelector('[data-link="whatsapp"]').href     = LINKS.whatsapp;
+    document.querySelector('[data-link="politica"]').href     = LINKS.politica;
+    document.querySelector('[data-link="termos"]').href       = LINKS.termos;
+  });
+
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
